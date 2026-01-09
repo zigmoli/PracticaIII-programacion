@@ -25,7 +25,9 @@ class GestorStock:
         self.cargar_datos()
         retorna=self.busca(id)
         self.datos=[]
-        return retorna,self.contador
+        pasos=self.contador
+        self.contador=0
+        return retorna,pasos
 
     def actualizar_cantidad(self,id,cantidad):
         self.cargar_datos()
@@ -78,3 +80,4 @@ class GestorStock:
             self.contador = self.contador + 1
             self.datos=self.datos[1:]
             return self.busca(id)
+
