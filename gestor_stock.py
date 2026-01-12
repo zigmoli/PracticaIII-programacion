@@ -55,15 +55,22 @@ class GestorStock:
     ''' Método: actualizar_cantidad. dada una cantidad y un id de medicamento, el método carga datos
     y luego cambia el dato de cantidad por el dado en el medicamento referenciado por el id, luego salva los datos a fichero'''
     ''' Input: id,  string con el id'''
-    ''' Input: cantidad, string con la cantidad a cambiar'''
+    ''' Input: cantidad, string/int con la cantidad a cambiar'''
     ''' Output. Bool True si la cosa va bien, error si no'''
 
     def actualizar_cantidad(self,id,cantidad):
+
         self.cargar_datos()
+        if isinstance(cantidad, int):
+            cantidad=str(cantidad)
+        bandera=0
         for medicamento in self.datos:
             if medicamento[0]==id:
+                bandera=1
                 medicamento[2]=cantidad
                 print('Se ha actualizado el stock del medicamento: ',medicamento[1],' con la cantidad:', medicamento[2])
+        if bandera==0:
+            print('Id de medicamento no encontrado')
         return self.guardar_datos()
 
     ''' Método: eliminar_caducados. El método carga datos de fichero y compara la fecha actual con la que está en fichero,
@@ -82,33 +89,39 @@ class GestorStock:
 
     ''' Método: guardar_datos. Guarda los datos de la lista de listas en el mismo fichero de donde se leyeron'''
     ''' Input: None'''
-    ''' Output: Bool True si bien'''
+    ''' Output: Bool True si bien. OSError si no puede guardar el fichero'''
     ''' Descripción: Primero abre el fichero en modo escritura y escribe la primera línea'''
     ''' Luego: bucle por cada linea de la lista donde se guardan los datos'''
     ''' Por cada medicamento se construye una cadena de texto que incluye el item de la lista y el separador de texto ';' '''
     ''' Se lleva la cuenta de los items para no escribir el separador tras el último item'''
+    ''' Si no hay datos que guardar informa y acaba'''
+
 
     def guardar_datos(self):
-        self.cargar_datos()
-        try:
-            with open('actividad3_stock_medicamentos.csv', 'w+',encoding='utf-8') as fichero:
-                fichero.write('id_medicamento;nombre;cantidad;fecha_caducidad\n')
-                for medicamento in self.datos:
-                   cadena=''
-                   contador=0
-                   longi=len(medicamento)
-                   for item in medicamento:
-                       if contador<longi-1:
-                        cadena=cadena+item+';'
-                       else:
-                           cadena=cadena+item
-                       contador=contador+1
-                   fichero.write(cadena)
-                   fichero.write('\n')
-            fichero.close()
+        if len(self.datos) > 0:
+            try:
+                with open('actividad3_stock_medicamentosI.csv', 'w+',encoding='utf-8') as fichero:
+                    fichero.write('id_medicamento;nombre;cantidad;fecha_caducidad\n')
+                    for medicamento in self.datos:
+                       cadena=''
+                       contador=0
+                       longi=len(medicamento)
+                       for item in medicamento:
+                           if contador<longi-1:
+                            cadena=cadena+item+';'
+                           else:
+                               cadena=cadena+item
+                           contador=contador+1
+                       fichero.write(cadena)
+                       fichero.write('\n')
+                fichero.close()
+                print('Datos guardados')
+                return True
+            except OSError:
+                return ('Fallo al slavar el fichero')
+        else:
+            print ('No hay datos que guardar')
             return True
-        except OSError:
-            return ('Fallo al slavar el fichero')
 
     ''' Método busca(id), método auxiliar para la búsqueda recursiva'''
     ''' Input: id, string con el id a buscar'''
@@ -128,4 +141,3 @@ class GestorStock:
             self.contador = self.contador + 1
             self.datos=self.datos[1:]
             return self.busca(id)
-
