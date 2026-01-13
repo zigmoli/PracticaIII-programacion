@@ -101,7 +101,7 @@ class GestorStock:
     def guardar_datos(self):
         if len(self.datos) > 0:
             try:
-                with open('actividad3_stock_medicamentosI.csv', 'w+',encoding='utf-8') as fichero:
+                with open('actividad3_stock_medicamentos_actualizado.csv', 'w+',encoding='utf-8') as fichero:
                     fichero.write('id_medicamento;nombre;cantidad;fecha_caducidad\n')
                     for medicamento in self.datos:
                        cadena=''
